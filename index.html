@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Sohan le Marchand de Cartes</title>
+<link rel="stylesheet" href="./src/styles.css">
+</head>
+<body>
+<div id="app">
+<div id="intro">
+  <div class="intro-cards"><div class="intro-card">🔥</div><div class="intro-card">⚡</div><div class="intro-card">💎</div></div>
+  <div class="intro-title">Sohan le Marchand<br>de Cartes</div>
+  <div class="intro-sub">Achète bas, vends haut, collectionne !</div>
+  <input class="name-input" id="ni" placeholder="Ton prénom..." maxlength="20">
+  <button class="btn-primary" onclick="G.start()">🎮 Nouvelle Partie</button>
+  <div class="restore-section">
+    <p>Déjà joué ? Entre ton prénom pour reprendre ☁️</p>
+    <input class="restore-input" id="ri" placeholder="Ton prénom...">
+    <button class="btn-restore" onclick="G.restore()">📂 Reprendre ma partie</button>
+  </div>
+</div>
+<div id="topbar">
+  <div class="topbar-row">
+    <div class="game-title">🃏 Sohan</div>
+    <div class="day-badge" id="dayBadge">Jour 1</div>
+    <div class="money-badge" id="moneyBadge">💰 0 €</div>
+  </div>
+  <div class="xp-wrap">
+    <div class="xp-info"><span id="lvlLabel">Niv.1</span><span id="xpLabel">0 / 10 XP</span></div>
+    <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+  </div>
+</div>
+<div id="tabs">
+  <button class="tab-btn active" data-tab="shop" onclick="G.tab('shop')"><span class="tab-icon">🏪</span><span>Boutique</span></button>
+  <button class="tab-btn" data-tab="album" onclick="G.tab('album')"><span class="tab-icon">📒</span><span>Album</span></button>
+  <button class="tab-btn" data-tab="bp" onclick="G.tab('bp')"><span class="tab-icon">👴</span><span>Bon Papa</span></button>
+  <button class="tab-btn" data-tab="save" onclick="G.tab('save')"><span class="tab-icon">💾</span><span>Sauver</span></button>
+</div>
+<div id="content">
+  <div class="tab-panel active" id="tab-shop">
+    <div class="vendor-area">
+      <div class="vendor v-theo"><div class="vendor-avatar">🤓</div><div><div class="vendor-name">Théo</div><div class="vendor-dialog" id="theo-dlg">Bienvenue !</div></div></div>
+      <div class="vendor v-raph"><div class="vendor-avatar">🎧</div><div><div class="vendor-name">Raph</div><div class="vendor-dialog" id="raph-dlg">Regarde les rares...</div></div></div>
+    </div>
+    <div class="market-pill" id="marketPill">📊 Marché calme</div>
+    <div class="sec-title">🃏 Cartes disponibles</div>
+    <div class="restock-info" id="restockInfo">🔄 Nouvelles cartes dans 7 jours</div>
+    <div class="cards-grid" id="shopGrid"></div>
+    <div class="sec-title">📦 Boosters</div>
+    <div class="boost-limit" id="boostLimit">3 boosters par semaine • 0/3 ouverts</div>
+    <div class="boosters-grid" id="boosterGrid"></div>
+  </div>
+  <div class="tab-panel" id="tab-album">
+    <div class="sec-title">📒 Ma Collection</div>
+    <div class="album-bar-wrap">
+      <div class="album-bar-info"><span id="albumCount">0 cartes</span><span id="albumCap">/ 10</span></div>
+      <div class="album-bar-bg"><div class="album-bar-fill" id="albumFill" style="width:0%"></div></div>
+    </div>
+    <div class="cards-grid" id="albumGrid"></div>
+  </div>
+  <div class="tab-panel" id="tab-bp">
+    <div class="bp-card">
+      <div class="bp-portrait">👴</div>
+      <div class="bp-name">Bon Papa</div>
+      <div class="bp-quote" id="bpQuote">"Mon petit, chaque carte a de la valeur !"</div>
+      <div class="bp-countdown" id="bpCountdown">Arrive dans 7 jours</div>
+      <button class="btn-bp" id="bpBtn" onclick="G.bonPapa()" disabled>🎁 Recevoir 50 €</button>
+    </div>
+    <div class="mg-card">
+      <div class="mg-title">⚔️ Duel de Cartes</div>
+      <p class="mg-sub">Choisis ta carte, bats Naïm ! (1 duel/jour)</p>
+      <select class="duel-select" id="duelSelect" onchange="G.duelPick()"></select>
+      <div class="duel-vs">
+        <div class="duel-side"><div class="duel-label">Toi</div><div class="duel-power" id="myPow">?</div></div>
+        <div style="font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:800;color:var(--muted)">VS</div>
+        <div class="duel-side"><div class="duel-label">Naïm</div><div class="duel-power" id="naimPow" style="color:var(--red)">?</div></div>
+      </div>
+      <button class="btn-duel" id="duelBtn" onclick="G.duel()">⚔️ Combattre !</button>
+    </div>
+    <div class="mg-card">
+      <div class="mg-title">📈 La Bourse des Cartes</div>
+      <p class="mg-sub">Monte ou baisse demain ? <span id="bourseLeft" style="color:var(--gold)">5 questions</span></p>
+      <div class="bourse-display" id="bourseDisplay">
+        <div class="bourse-emoji" id="bourseEmoji">🎴</div>
+        <div class="bourse-cname" id="bourseName">—</div>
+        <div class="bourse-price" id="boursePrice">— €</div>
+      </div>
+      <div class="bourse-btns">
+        <button class="btn-b btn-up" onclick="G.bourse('up')">📈 Monte</button>
+        <button class="btn-b btn-dn" onclick="G.bourse('dn')">📉 Baisse</button>
+      </div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tab-save">
+    <div class="sec-title">💾 Sauvegarde</div>
+    <div class="save-box">
+      <p>☁️ Sauvegarde avec ton prénom — retrouve ta partie partout !</p>
+      <div class="save-name-row">
+        <input class="save-name-input" id="sni" placeholder="Ton prénom...">
+        <button class="btn-cloud-save" onclick="G.cloudSave()">☁️ Sauver</button>
+      </div>
+      <button class="btn-cloud-save" style="width:100%;padding:12px;margin-bottom:0" onclick="G.cloudLoad()">📂 Charger</button>
+    </div>
+    <div class="save-box" style="margin-top:14px">
+      <p>📱 Code de secours à copier dans tes Notes :</p>
+      <div class="save-code" id="saveCode">—</div>
+      <button class="btn-copy" onclick="G.copyCode()">📋 Copier le code</button>
+    </div>
+  </div>
+</div>
+<button id="next-day-btn" onclick="G.nextDay()">☀️ Jour suivant</button>
+</div>
+<div class="modal-overlay" id="modal" onclick="G.closeModal(event)">
+  <div class="modal-sheet">
+    <div class="modal-title" id="mTitle"></div>
+    <div class="modal-emoji" id="mEmoji"></div>
+    <div class="modal-price" id="mPrice"></div>
+    <div class="modal-sub" id="mSub"></div>
+    <div class="modal-btns">
+      <button class="btn-confirm" id="mConfirm">✅ Confirmer</button>
+      <button class="btn-cancel" onclick="G.closeModal()">❌ Annuler</button>
+    </div>
+  </div>
+</div>
+<div class="lvlup-overlay" id="lvlupOverlay">
+  <div class="lvlup-star">⭐</div>
+  <div class="lvlup-title" id="lvlupTitle">NIVEAU 2 !</div>
+  <div class="lvlup-sub" id="lvlupSub"></div>
+  <button class="btn-lvlup" onclick="G.closeLvlup()">🎉 Super !</button>
+</div>
+<div class="pack-overlay" id="packOverlay">
+  <div class="pack-stage" id="packStage"></div>
+</div>
+<div class="toast-wrap" id="toasts"></div>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
